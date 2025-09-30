@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabFlow</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <div class="header-content">
+        <h1><i class="fas fa-layer-group"></i> TabFlow</h1>
+        <div class="header-actions">
+          <button id="viewModeBtn" class="icon-btn" title="Toggle View">
+            <i class="fas fa-th" id="viewIcon"></i>
+          </button>
+          <button id="aiToggleBtn" class="icon-btn active" title="AI Suggestions">
+            <i class="fas fa-brain"></i>
+          </button>
+          <button id="newGroupBtn" class="btn-primary">
+            <i class="fas fa-plus"></i> New Group
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="aiPanel" class="ai-panel">
+      <h3><i class="fas fa-robot"></i> AI Suggestions</h3>
+      <div id="suggestions"></div>
+    </div>
+
+    <div id="groupsContainer" class="groups-container"></div>
+
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+      <h2>No Tab Groups Yet</h2>
+      <p>Create your first group to organize your tabs</p>
+      <button id="createFirstGroup" class="btn-primary">
+        <i class="fas fa-plus-circle"></i> Create Group
+      </button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
