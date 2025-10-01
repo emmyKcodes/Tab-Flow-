@@ -102,7 +102,6 @@ chrome.commands.onCommand.addListener(async (command) => {
   }
 });
 
-// Quick group current tab
 async function quickGroupCurrentTab() {
   try {
     const [tab] = await chrome.tabs.query({
@@ -117,7 +116,6 @@ async function quickGroupCurrentTab() {
     const url = new URL(tab.url);
     const domain = url.hostname.replace("www.", "");
 
-    // Find existing group for this domain
     let targetGroup = groups.find((g) =>
       g.tabs.some((t) => {
         try {
@@ -129,7 +127,6 @@ async function quickGroupCurrentTab() {
     );
 
     if (!targetGroup) {
-      // Create new group
       const colors = [
         "#8b5a3c",
         "#6d4226",
@@ -153,7 +150,6 @@ async function quickGroupCurrentTab() {
       groups.push(targetGroup);
     }
 
-    // Add tab to group if not already present
     const tabExists = targetGroup.tabs.some((t) => t.id === tab.id);
     if (!tabExists) {
       targetGroup.tabs.push({
@@ -168,7 +164,6 @@ async function quickGroupCurrentTab() {
 
     await chrome.storage.local.set({ groups });
 
-    // Show notification
     chrome.notifications.create({
       type: "basic",
       iconUrl: "icons/icon128.png",
@@ -181,7 +176,6 @@ async function quickGroupCurrentTab() {
   }
 }
 
-// Periodic cleanup of stale data (runs every hour)
 chrome.alarms.create("cleanup", { periodInMinutes: 60 });
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
@@ -190,17 +184,14 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   }
 });
 
-// Clean up stale data
 async function cleanupStaleData() {
   try {
     const result = await chrome.storage.local.get(["groups"]);
     const groups = result.groups || [];
 
-    // Get all current tab IDs
     const allTabs = await chrome.tabs.query({});
     const currentTabIds = new Set(allTabs.map((t) => t.id));
 
-    // Remove tabs that no longer exist
     let updated = false;
     groups.forEach((group) => {
       const initialLength = group.tabs.length;
@@ -211,7 +202,6 @@ async function cleanupStaleData() {
     });
 
     if (updated) {
-      // Remove empty groups
       const filteredGroups = groups.filter((g) => g.tabs.length > 0);
       await chrome.storage.local.set({ groups: filteredGroups });
       console.log(
@@ -225,22 +215,19 @@ async function cleanupStaleData() {
   }
 }
 
-// Handle messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "syncTabs") {
     syncAllTabs().then(sendResponse);
-    return true; // Will respond asynchronously
+    return true; 
   }
 });
 
-// Sync all tabs with storage
 async function syncAllTabs() {
   try {
     const allTabs = await chrome.tabs.query({ currentWindow: true });
     const result = await chrome.storage.local.get(["groups"]);
     const groups = result.groups || [];
 
-    // Update existing tabs
     groups.forEach((group) => {
       group.tabs.forEach((storedTab) => {
         const currentTab = allTabs.find((t) => t.id === storedTab.id);

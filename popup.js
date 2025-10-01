@@ -192,7 +192,6 @@ function renderGroups() {
   emptyState.style.display = "none";
   container.innerHTML = groups.map((group) => createGroupCard(group)).join("");
 
-  // Add event listeners
   groups.forEach((group) => {
     const card = document.querySelector(`[data-group-id="${group.id}"]`);
     if (card) {
@@ -214,7 +213,6 @@ function renderGroups() {
   });
 }
 
-// Create group card HTML
 function createGroupCard(group) {
   const themeStyle = getThemeStyle(group.theme, group.color);
 
@@ -246,7 +244,6 @@ function createGroupCard(group) {
   `;
 }
 
-// Create tab item HTML
 function createTabItem(tab) {
   const priority = getTabPriority(tab);
   const priorityClass = `priority-${priority}`;
@@ -282,7 +279,6 @@ function createTabItem(tab) {
   `;
 }
 
-// Get time since last visit
 function getTimeSince(timestamp) {
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
 
@@ -292,7 +288,6 @@ function getTimeSince(timestamp) {
   return `${Math.floor(seconds / 86400)}d ago`;
 }
 
-// Get theme style
 function getThemeStyle(theme, color) {
   const styles = {
     gradient: `background: linear-gradient(135deg, ${color}30 0%, ${color}50 100%); border: 2px solid ${color}80;`,
@@ -302,7 +297,6 @@ function getThemeStyle(theme, color) {
   return styles[theme] || styles.gradient;
 }
 
-// Get tab priority
 function getTabPriority(tab) {
   const hoursSinceVisit = (Date.now() - tab.lastVisited) / 3600000;
   if (tab.visitCount > 50) return "high";
@@ -311,7 +305,6 @@ function getTabPriority(tab) {
   return "normal";
 }
 
-// Toggle group collapse
 async function toggleGroup(groupId) {
   const group = groups.find((g) => g.id === groupId);
   if (group) {
@@ -321,7 +314,6 @@ async function toggleGroup(groupId) {
   }
 }
 
-// Delete group
 async function deleteGroup(groupId) {
   if (confirm("Delete this group? Tabs will remain open.")) {
     groups = groups.filter((g) => g.id !== groupId);
@@ -331,7 +323,6 @@ async function deleteGroup(groupId) {
   }
 }
 
-// Open tab
 async function openTab(tab) {
   try {
     const existingTabs = await chrome.tabs.query({ url: tab.url });
@@ -342,7 +333,6 @@ async function openTab(tab) {
       await chrome.tabs.create({ url: tab.url });
     }
 
-    // Update visit count
     const group = groups.find((g) => g.tabs.some((t) => t.id === tab.id));
     if (group) {
       const tabObj = group.tabs.find((t) => t.id === tab.id);
@@ -357,12 +347,10 @@ async function openTab(tab) {
   }
 }
 
-// Generate AI suggestions
 function generateAISuggestions() {
   const suggestions = document.getElementById("suggestions");
   const aiSuggestions = [];
 
-  // Check for duplicate domains
   const domainCounts = {};
   groups.forEach((group) => {
     group.tabs.forEach((tab) => {
@@ -373,7 +361,6 @@ function generateAISuggestions() {
     });
   });
 
-  // Suggest merging if duplicates found
   const duplicateDomains = Object.entries(domainCounts).filter(
     ([_, count]) => count > 1
   );
@@ -385,7 +372,6 @@ function generateAISuggestions() {
     });
   }
 
-  // Check for stale tabs
   const staleTabs = groups.reduce((count, group) => {
     return (
       count +
