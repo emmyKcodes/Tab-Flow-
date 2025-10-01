@@ -1,9 +1,7 @@
-// State management
 let groups = [];
 let aiEnabled = true;
 let viewMode = "cards";
 
-// Initialize
 document.addEventListener("DOMContentLoaded", async () => {
   await loadGroups();
   setupEventListeners();
@@ -11,7 +9,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   generateAISuggestions();
 });
 
-// Load groups from Chrome storage
 async function loadGroups() {
   const result = await chrome.storage.local.get(["groups"]);
   if (result.groups && result.groups.length > 0) {
@@ -21,12 +18,10 @@ async function loadGroups() {
   }
 }
 
-// Save groups to Chrome storage
 async function saveGroups() {
   await chrome.storage.local.set({ groups });
 }
 
-// Create initial groups from current tabs
 async function createInitialGroups() {
   const tabs = await chrome.tabs.query({ currentWindow: true });
 
@@ -51,19 +46,16 @@ async function createInitialGroups() {
         lastVisited: Date.now(),
         visitCount: 1,
       });
-    } catch (e) {
-      // Skip invalid URLs
-    }
+    } catch (e) {}
   });
 
-  // Create groups from domains with coffee brown palette
   const colors = [
-    "#8b5a3c", // Coffee brown
-    "#6d4226", // Dark chocolate
-    "#a0826d", // Light coffee
-    "#5c3d2e", // Espresso
-    "#b8956a", // Latte
-    "#8b6f47", // Mocha
+    "#8b5a3c",
+    "#6d4226",
+    "#a0826d",
+    "#5c3d2e",
+    "#b8956a",
+    "#8b6f47",
   ];
   let colorIndex = 0;
 
@@ -86,7 +78,6 @@ async function createInitialGroups() {
   await saveGroups();
 }
 
-// Get appropriate icon for domain
 function getIconForDomain(domain) {
   const iconMap = {
     gmail: "fa-envelope",
@@ -116,7 +107,6 @@ function getIconForDomain(domain) {
   return "fa-folder";
 }
 
-// Setup event listeners
 function setupEventListeners() {
   document
     .getElementById("newGroupBtn")
@@ -130,7 +120,6 @@ function setupEventListeners() {
     .addEventListener("click", toggleViewMode);
 }
 
-// Create new group
 async function createNewGroup() {
   const colors = [
     "#8b5a3c",
@@ -155,7 +144,6 @@ async function createNewGroup() {
   renderGroups();
 }
 
-// Toggle AI panel
 function toggleAI() {
   aiEnabled = !aiEnabled;
   const panel = document.getElementById("aiPanel");
@@ -170,7 +158,6 @@ function toggleAI() {
   }
 }
 
-// Toggle view mode
 function toggleViewMode() {
   viewMode = viewMode === "cards" ? "list" : "cards";
   const icon = document.getElementById("viewIcon");
@@ -178,7 +165,6 @@ function toggleViewMode() {
   renderGroups();
 }
 
-// Render groups
 function renderGroups() {
   const container = document.getElementById("groupsContainer");
   const emptyState = document.getElementById("emptyState");
@@ -390,7 +376,6 @@ function generateAISuggestions() {
     });
   }
 
-  // Suggest grouping if many ungrouped tabs
   chrome.tabs.query({ currentWindow: true }).then((allTabs) => {
     const groupedTabIds = groups.flatMap((g) => g.tabs.map((t) => t.id));
     const ungroupedCount = allTabs.filter(
@@ -409,7 +394,6 @@ function generateAISuggestions() {
   });
 }
 
-// Render AI suggestions
 function renderSuggestions(aiSuggestions) {
   const container = document.getElementById("suggestions");
 
@@ -441,13 +425,11 @@ function renderSuggestions(aiSuggestions) {
     )
     .join("");
 
-  // Add click handlers
   container.querySelectorAll(".suggestion-action").forEach((btn) => {
     btn.addEventListener("click", () => handleAISuggestion(btn.dataset.action));
   });
 }
 
-// Handle AI suggestion actions
 async function handleAISuggestion(action) {
   switch (action) {
     case "merge-domains":
@@ -466,7 +448,6 @@ async function handleAISuggestion(action) {
   generateAISuggestions();
 }
 
-// Merge groups with duplicate domains
 async function mergeDuplicateDomains() {
   const domainGroups = {};
 
@@ -482,12 +463,10 @@ async function mergeDuplicateDomains() {
     });
   });
 
-  // Find domains that appear in multiple groups
   for (const [domain, items] of Object.entries(domainGroups)) {
     if (items.length > 1) {
       const uniqueGroups = [...new Set(items.map((item) => item.group))];
       if (uniqueGroups.length > 1) {
-        // Merge into first group
         const targetGroup = uniqueGroups[0];
         const otherGroups = uniqueGroups.slice(1);
 
@@ -507,11 +486,9 @@ async function mergeDuplicateDomains() {
     }
   }
 
-  // Remove empty groups
   groups = groups.filter((g) => g.tabs.length > 0);
 }
 
-// Archive stale tabs
 async function archiveStaleTabs() {
   let archivedGroup = groups.find((g) => g.name === "Archived");
 

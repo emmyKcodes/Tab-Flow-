@@ -1,3 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Josefin Sans', sans-serif;
+}
 * {
   margin: 0;
   padding: 0;
@@ -6,9 +11,9 @@
 
 body {
   width: 450px;
-  min-height: 500px;
-  max-height: 600px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  min-height: 300px;
+  max-height: 400px;
+  font-family: "josefin-sans";
   background: linear-gradient(135deg, #2c1810 0%, #1a0f08 100%);
   color: #f5e6d3;
   overflow-y: auto;
@@ -17,7 +22,7 @@ body {
 .header {
   background: rgba(44, 24, 16, 0.95);
   backdrop-filter: blur(10px);
-  padding: 16px;
+  padding: 1rem;
   border-bottom: 1px solid rgba(139, 90, 60, 0.3);
   position: sticky;
   top: 0;

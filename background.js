@@ -1,11 +1,7 @@
-// TabFlow Background Service Worker
-
-// Initialize extension
 chrome.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === "install") {
     console.log("TabFlow installed! Welcome!");
 
-    // Set default settings
     await chrome.storage.local.set({
       groups: [],
       settings: {
@@ -15,27 +11,23 @@ chrome.runtime.onInstalled.addListener(async (details) => {
       },
     });
 
-    // Open welcome page
     chrome.tabs.create({
       url: "https://github.com/yourusername/tabflow-extension",
     });
   }
 });
 
-// Listen for tab updates to track activity
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.url) {
     await updateTabActivity(tabId, tab);
   }
 });
 
-// Listen for tab activation
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
   const tab = await chrome.tabs.get(activeInfo.tabId);
   await updateTabActivity(activeInfo.tabId, tab);
 });
 
-// Update tab activity in storage
 async function updateTabActivity(tabId, tab) {
   try {
     const result = await chrome.storage.local.get(["groups"]);
@@ -64,7 +56,6 @@ async function updateTabActivity(tabId, tab) {
   }
 }
 
-// Listen for tab removals to clean up storage
 chrome.tabs.onRemoved.addListener(async (tabId) => {
   try {
     const result = await chrome.storage.local.get(["groups"]);
@@ -90,7 +81,6 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
   }
 });
 
-// Keyboard shortcut handler
 chrome.commands.onCommand.addListener(async (command) => {
   switch (command) {
     case "open-popup":
